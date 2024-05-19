@@ -46,7 +46,6 @@ export const signin = async (req, res, next) => {
 }
 
 export const google = async (req, res, next) => {
-    console.log(req.body)
     try {
         const validUser = await User.findOne({ email: req.body.email })
         if (validUser) {
@@ -77,7 +76,7 @@ export const google = async (req, res, next) => {
             const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET)
             const expiryDate = new Date(Date.now() + 3600000)
 
-            const { password: hashedPassword2, ...user } = newUser
+            const { password: hashedPassword2, ...user } = newUser._doc;
 
             res
                 .cookie('access_token', token, {
