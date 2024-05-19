@@ -49,7 +49,7 @@ export const google = async (req, res, next) => {
     try {
         const validUser = await User.findOne({ email: req.body.email })
         if (validUser) {
-            jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+           const token =  jwt.sign({ id: validUser._id }, process.env.JWT_SECRET)
 
             const { password: hashedPassword, ...user } = validUser._doc;
             const expiryDate = new Date(Date.now() + 3600000)
