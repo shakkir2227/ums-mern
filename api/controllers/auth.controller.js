@@ -41,7 +41,7 @@ export const signin = async (req, res, next) => {
             .json(user)
 
     } catch (error) {
-
+        next(err)
     }
 }
 
@@ -88,6 +88,6 @@ export const google = async (req, res, next) => {
 
         }
     } catch (error) {
-        console.log(`User creation Error: ${error}`)
+        next(err)
     }
 }
