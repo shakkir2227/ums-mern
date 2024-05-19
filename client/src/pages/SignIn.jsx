@@ -6,6 +6,7 @@ import {
   signInFailure,
 } from '../redux/user/userSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
+import OAuth from '../components/OAuth.jsx';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({});
@@ -35,7 +36,7 @@ const SignIn = () => {
       const data = await res.json();
 
       if (data.error) {
-        console.log(data)
+        console.log(data);
         dispatch(signInFailure(data.error));
         return;
       }
@@ -44,7 +45,7 @@ const SignIn = () => {
 
       navigate('/');
     } catch (err) {
-       dispatch(signInFailure(err.message));
+      dispatch(signInFailure(err.message));
     }
   };
 
@@ -81,6 +82,7 @@ const SignIn = () => {
         >
           {loading ? `Loading...` : `Sign In`}
         </button>
+        <OAuth />
       </form>
 
       <div className="flex gap-2 mt-5">
@@ -89,7 +91,9 @@ const SignIn = () => {
           <span className="text-blue-500">Sign Up</span>
         </Link>
       </div>
-      <p className="text-red-700 mt-5">{error ? error || `Something went wrong`: ""}</p>
+      <p className="text-red-700 mt-5">
+        {error ? error || `Something went wrong` : ''}
+      </p>
     </div>
   );
 };
