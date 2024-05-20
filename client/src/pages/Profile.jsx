@@ -1,12 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from 'firebase/storage';
-import { app } from '../firebase';
+
+import {useImageUpload} from "../utils/useImageUpload.js"
 import {
   updateUserStart,
   updateUserSuccess,
@@ -26,34 +21,11 @@ const Profile = () => {
 
   useEffect(() => {
     if (image) {
-      handleFileUpload(image);
+      useImageUpload(image, setImagePercent, setImageError, setFormData, formData);
     }
   }, [image]);
 
-  const handleFileUpload = async (image) => {
-    const storage = getStorage(app);
-    const fileName = new Date().getTime() + image.name;
-    const storageRef = ref(storage, fileName);
-
-    const uploadTask = uploadBytesResumable(storageRef, image);
-
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setImagePercent(Math.round(progress));
-      },
-      (error) => {
-        setImageError(true);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
-          setFormData({ ...formData, profilePicture: downloadURL })
-        );
-      }
-    );
-  };
+ 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -137,11 +109,13 @@ const Profile = () => {
           type="text"
           id="username"
           value={username}
+          readOnly
           className="bg-slate-200 rounded-lg p-3  "
         ></input>
         <input
           type="email"
           id="email"
+          readOnly
           value={email}
           className="bg-slate-200 rounded-lg p-3  "
         ></input>

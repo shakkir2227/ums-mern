@@ -28,8 +28,17 @@ const UsersList = () => {
     <Table>
       <UserHeader />
 
-      {users.map((user,  index) => {
-        return <UserBody key={user._id} username={user.username} email={user.email} index = {index} />;
+      {users?.map((user,  index) => {
+        return (
+          <UserBody
+            key={user._id}
+            id={user._id}
+            username={user.username}
+            email={user.email}
+            index={index}
+            profilePicture={user.profilePicture}
+          />
+        );
       })}
     </Table>
   );
