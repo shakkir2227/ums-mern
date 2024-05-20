@@ -1,11 +1,14 @@
-import React from 'react'
+import React from 'react';
+
+import UsersList from './UsersList';
+
 
 const AdminHome = () => {
   return (
-    <div>
-        Admin Home
+    <div className="max-w-lg mx-auto">
+      <UsersList/>
     </div>
-  )
-}
+  );
+};
 
-export default AdminHome
+export default AdminHome;
