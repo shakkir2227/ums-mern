@@ -8,7 +8,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import OAuth from '../components/OAuth.jsx';
 
-const SignIn = () => {
+const AdminSignIn = () => {
   const [formData, setFormData] = useState({});
   const { loading, error } = useSelector((state) => state.user);
 
@@ -25,7 +25,7 @@ const SignIn = () => {
     try {
       dispatch(signInStart());
 
-      const res = await fetch(`/api/auth/signin`, {
+      const res = await fetch(`/api/admin/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -41,8 +41,8 @@ const SignIn = () => {
       }
 
       dispatch(signInSuccess(data));
+      navigate("/admin/home")
 
-      navigate('/');
     } catch (err) {
       dispatch(signInFailure(err.message));
     }
@@ -81,15 +81,9 @@ const SignIn = () => {
         >
           {loading ? `Loading...` : `Sign In`}
         </button>
-        <OAuth />
+
       </form>
 
-      <div className="flex gap-2 mt-5">
-        <p>Dont have an account? </p>
-        <Link to="/signup">
-          <span className="text-blue-500">Sign Up</span>
-        </Link>
-      </div>
       <p className="text-red-700 mt-5">
         {error ? error || `Something went wrong` : ''}
       </p>
@@ -97,4 +91,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default AdminSignIn;

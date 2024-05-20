@@ -7,6 +7,8 @@ import Header from './components/Header';
 import PrivateRoute from './components/PrivateRoute';
 import NotFound from './components/NotFound';
 import RedirectIfLoggedIn from './components/RedirectIfLoggedIn';
+import AdminSignIn from './components/AdminSignIn';
+import AdminHome from "./components/AdminHome";
 
 const App = () => {
   return (
@@ -23,6 +25,10 @@ const App = () => {
         <Route path="/profile" element={<PrivateRoute />}>
           <Route path="/profile" element={<Profile />} />
         </Route>
+
+        <Route path="/admin/home" element={<AdminHome />}></Route>
+        <Route path="/admin/signin" element={<AdminSignIn />}></Route>
+
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
