@@ -62,3 +62,24 @@ export const viewUsersList = async (req, res, next) => {
     }
 
 }
+
+export const updateUser = async (req, res, next) => {
+
+    const { id: userId } = req.params
+    const { username, profilePicture } = req.body;
+
+    try {
+        await User.updateOne({ _id: userId }, { $set: { username, profilePicture } })
+        const updatedUser = await User.findOne({ _id: userId });
+        const { password: hashedPassword, ...user } = updatedUser._doc
+        return res.status(200).json(user);
+
+    } catch (error) {
+        next(errorHandler())
+    }
+
+}
+
+export const deleteUser = async (req, res, next) => {
+    const { id: userId } = req.params   
+}

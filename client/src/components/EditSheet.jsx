@@ -1,4 +1,7 @@
 import { Input } from '@/components/ui/input';
+import { Toaster } from '@/components/ui/toaster';
+import { useToast } from '@/components/ui/use-toast';
+
 import {
   Sheet,
   SheetContent,
@@ -7,16 +10,22 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Button } from './ui/button';
+import { Button, buttonVariants } from './ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useImageUpload } from '@/utils/useImageUpload';
+import { replaceUpdatedUser } from '../redux/user/usersListSlice.js';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const EditSheet = ({ id, username, email, profilePicture }) => {
   const fileRef = useRef();
   const [image, setImage] = useState(null);
   const [imagePercent, setImagePercent] = useState(0);
   const [imageError, setImageError] = useState(false);
-  const [formData, setFormData] = useState({ username });
+  const [formData, setFormData] = useState({ username, profilePicture });
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (image) {
@@ -34,23 +43,42 @@ const EditSheet = ({ id, username, email, profilePicture }) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleFormSubmit = async () => {
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+
     try {
-      const res = await fetch('/api/admin/update-user', {
-        method: 'PUT',
+      const api_endpoint = `/api/admin/update-user/${id}`;
+
+      const res = await fetch(api_endpoint, {
+        method: 'POST',
         headers: {
-          ContentType: 'application/json',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
 
       const data = await res.json();
-      console.log(data)
-      
+      if (data.error) {
+        console.log(data.error);
+      }
+
+      dispatch(replaceUpdatedUser(data));
+      toast({
+        description: 'User Updated successfully.',
+      });
+
+      setImagePercent(0);
+      setImageError(false);
     } catch (error) {
       console.log(error);
     }
   };
+
+  const handleDeletion = (e) => {
+    e.preventDefault()
+    
+    
+  }
 
   return (
     <div>
@@ -95,10 +123,27 @@ const EditSheet = ({ id, username, email, profilePicture }) => {
                 fileRef.current.click();
               }}
             ></img>
-            <Button className="mx-32 my-10">UPDATE</Button>
+            <p className="text-sm self-center p-3 mx-24">
+              {' '}
+              {imageError ? (
+                <span className="text-red-700">Error uploading Image</span>
+              ) : imagePercent > 0 && imagePercent < 100 ? (
+                <span> {`Uploading: ${imagePercent} %`} </span>
+              ) : imagePercent === 100 ? (
+                <span className="text-green-700">Uploaded successfully</span>
+              ) : (
+                ''
+              )}{' '}
+            </p>
+
+            <div className="flex flex-col max-w-36 mx-auto gap-3">
+              <Button>UPDATE</Button>
+              <Button type="button" onClick = {handleDeletion} variant="destructive"> DELETE </Button>
+            </div>
           </form>
         </SheetContent>
       </Sheet>
+      <Toaster />
     </div>
   );
 };
