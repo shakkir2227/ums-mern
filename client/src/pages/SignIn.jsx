@@ -8,9 +8,14 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import OAuth from '../components/OAuth.jsx';
 
+import { useToast } from '@/components/ui/use-toast';
+import { Toaster } from '@/components/ui/toaster';
+
 const SignIn = () => {
   const [formData, setFormData] = useState({});
   const { loading, error } = useSelector((state) => state.user);
+
+  const { toast } = useToast();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -36,15 +41,22 @@ const SignIn = () => {
       const data = await res.json();
 
       if (data.error) {
-        dispatch(signInFailure(data.error));
+        toast({
+          title: 'Uh oh! Something went wrong.',
+          description: data.error,
+        });
+        dispatch(signInFailure());
         return;
       }
 
       dispatch(signInSuccess(data));
 
       navigate('/');
-    } catch (err) {
-      dispatch(signInFailure(err.message));
+    } catch (error) {
+      dispatch(signInFailure());
+      toast({
+        title: 'Uh oh! Something went wrong.',
+      });
     }
   };
 
@@ -93,6 +105,8 @@ const SignIn = () => {
       <p className="text-red-700 mt-5">
         {error ? error || `Something went wrong` : ''}
       </p>
+
+      <Toaster />
     </div>
   );
 };

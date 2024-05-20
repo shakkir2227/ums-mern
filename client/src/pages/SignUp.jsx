@@ -18,6 +18,10 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // validating the values
+    const [username, email, password] =  formData
+    if
+
     try {
       // Reusing sign in dispatch in sign up.
       dispatch(signInStart());

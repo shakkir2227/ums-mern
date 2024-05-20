@@ -8,7 +8,9 @@ import PrivateRoute from './components/PrivateRoute';
 import NotFound from './components/NotFound';
 import RedirectIfLoggedIn from './components/RedirectIfLoggedIn';
 import AdminSignIn from './components/AdminSignIn';
-import AdminHome from "./components/AdminHome";
+import AdminHome from './components/AdminHome';
+import RedirectAdminIfLoggedIn from './components/RedirectAdminIfLoggedIn';
+import RedirectAdminIfNotLoggedIn from './components/RedirectAdminIfNotLoggedIn';
 
 const App = () => {
   return (
@@ -26,8 +28,13 @@ const App = () => {
           <Route path="/profile" element={<Profile />} />
         </Route>
 
-        <Route path="/admin/home" element={<AdminHome />}></Route>
-        <Route path="/admin/signin" element={<AdminSignIn />}></Route>
+        <Route path="/admin/home" element={<RedirectAdminIfNotLoggedIn />}>
+          <Route path="/admin/home" element={<AdminHome />}></Route>
+        </Route>
+
+        <Route path="/admin/signin" element={<RedirectAdminIfLoggedIn />}>
+          <Route path="/admin/signin" element={<AdminSignIn />}></Route>
+        </Route>
 
         <Route path="*" element={<NotFound />} />
       </Routes>

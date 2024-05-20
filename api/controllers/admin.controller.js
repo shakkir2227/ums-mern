@@ -25,7 +25,7 @@ export const LoginAdmin = async (req, res, next) => {
 
     const { password: hashedPassword, ...adminDetails } = admin._doc;
 
-    const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET)
+    const token = jwt.sign({ id: admin._id, isAdmin: true }, process.env.JWT_SECRET)
     const expiryDate = new Date((Date.now() + 3600000))
 
     res
@@ -86,7 +86,7 @@ export const deleteUser = async (req, res, next) => {
 
     try {
         await User.deleteOne({ _id: userId })
-        return res.status(200).json({message: 'Deleted User successfully', id: userId})
+        return res.status(200).json({ message: 'Deleted User successfully', id: userId })
 
     } catch (error) {
         console.log(error)

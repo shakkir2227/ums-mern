@@ -22,6 +22,7 @@ export const signup = async (req, res, next) => {
     }
 }
 
+
 export const signin = async (req, res, next) => {
     const { email, password } = req.body;
 
@@ -29,6 +30,9 @@ export const signin = async (req, res, next) => {
         const validUser = await User.findOne({ email })
         if (!validUser) return next(errorHandler(404, 'User not found'))
 
+        if(validUser.isAdmin) {
+            return next(errorHandler(403, "Access Denied: Your credentials do not have permission to access this page" ))
+        }
         const validPassword = bcryptjs.compareSync(password, validUser.password)
         if (!validPassword) return next(errorHandler(401, 'Wrong credentials'))
         const { password: hashedPassword, ...user } = validUser._doc;
