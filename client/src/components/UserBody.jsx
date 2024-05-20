@@ -4,16 +4,20 @@ import {
   TableCell,
   TableRow,
 } from '@/components/ui/table';
-const UserBody = () => {
+const UserBody = ({key, username, email, index}) => {
+
+    const clickHandler = () => {
+        console.log(`Button clicked`)
+    }
+
   return (
     <TableBody>
       <TableRow>
-        <TableCell className="font-medium">1</TableCell>
-        <TableCell>john123</TableCell>
-        <TableCell>john123@mail.com</TableCell>
-        <TableCell className="text-right">10:01:11 IST</TableCell>
+        <TableCell className="font-medium">{index+1}</TableCell>
+        <TableCell>{username}</TableCell>
+        <TableCell>{email}</TableCell>
         <TableCell>
-          <Button variant="default">
+          <Button variant="default" onClick = {clickHandler} >
             Edit
           </Button>
         </TableCell>

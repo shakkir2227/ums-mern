@@ -34,3 +34,31 @@ export const LoginAdmin = async (req, res, next) => {
         .json(adminDetails)
 
 }
+
+export const viewUsersList = async (req, res, next) => {
+
+    // Take all users except admin, take their username, email
+    // profile pic and id. 
+    try {
+        const allUsers = await User.aggregate([
+            {
+                $match: {
+                    isAdmin: false
+                }
+            },
+            {
+                $project: {
+                    username: 1,
+                    email: 1,
+                    profilePicture: 1,
+
+                }
+            }
+        ])
+
+        return res.status(200).json(allUsers)
+    } catch (error) {
+        next(errorHandler(404, 'Internal server Error'))
+    }
+
+}

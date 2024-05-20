@@ -7,7 +7,7 @@ const UserHeader = () => {
         <TableHead className="w-[100px]">Index</TableHead>
         <TableHead>Username</TableHead>
         <TableHead>Email</TableHead>
-        <TableHead className="text-right">Last LoggedIn</TableHead>
+        <TableHead>Edit</TableHead>
       </TableRow>
     </TableHeader>
   );
