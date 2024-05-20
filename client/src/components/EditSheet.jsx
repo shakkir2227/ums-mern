@@ -1,7 +1,15 @@
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useImageUpload } from '@/utils/useImageUpload';
+import {
+  replaceUpdatedUser,
+  removeDeletedUser,
+} from '../redux/user/usersListSlice.js';
+import { useDispatch } from 'react-redux';
+
 import { Input } from '@/components/ui/input';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/components/ui/use-toast';
-
 import {
   Sheet,
   SheetContent,
@@ -11,11 +19,18 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Button, buttonVariants } from './ui/button';
-import { useEffect, useRef, useState } from 'react';
-import { useImageUpload } from '@/utils/useImageUpload';
-import { replaceUpdatedUser } from '../redux/user/usersListSlice.js';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+
 
 const EditSheet = ({ id, username, email, profilePicture }) => {
   const fileRef = useRef();
@@ -62,11 +77,11 @@ const EditSheet = ({ id, username, email, profilePicture }) => {
         console.log(data.error);
       }
 
-      dispatch(replaceUpdatedUser(data));
       toast({
         description: 'User Updated successfully.',
       });
-
+      
+      dispatch(replaceUpdatedUser(data));
       setImagePercent(0);
       setImageError(false);
     } catch (error) {
@@ -74,11 +89,45 @@ const EditSheet = ({ id, username, email, profilePicture }) => {
     }
   };
 
-  const handleDeletion = (e) => {
-    e.preventDefault()
-    
-    
-  }
+  const handleDeletion = async (e) => {
+    e.preventDefault();
+
+    try {
+      const api_endpoint = `/api/admin/delete-user/${id}`;
+      const res = await fetch(api_endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: null,
+      });
+
+      const data = await res.json();
+
+      if(data.error) {
+         toast({
+           description: data.error,
+         });
+
+      }
+
+      toast({
+        description: data.message,
+      });
+      console.log(data.id)
+
+     dispatch(removeDeletedUser(data));
+
+
+    } catch (error) {
+      toast({
+        description: error,
+      });
+
+    }
+  };
+
+ 
 
   return (
     <div>
@@ -90,10 +139,6 @@ const EditSheet = ({ id, username, email, profilePicture }) => {
         <SheetContent>
           <SheetHeader>
             <SheetTitle>Update User</SheetTitle>
-            <SheetDescription>
-              This action cannot be undone. This will permanently update user's
-              account and remove old data from our servers.
-            </SheetDescription>
           </SheetHeader>
 
           <form onSubmit={handleFormSubmit}>
@@ -136,9 +181,33 @@ const EditSheet = ({ id, username, email, profilePicture }) => {
               )}{' '}
             </p>
 
-            <div className="flex flex-col max-w-36 mx-auto gap-3">
+            <div className="flex flex-col max-w-20 mx-auto gap-3">
               <Button>UPDATE</Button>
-              <Button type="button" onClick = {handleDeletion} variant="destructive"> DELETE </Button>
+
+              <AlertDialog>
+                <AlertDialogTrigger>
+                  <Button type="button" variant="destructive">
+                    DELETE
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      user account and remove data from our servers.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeletion}>
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </form>
         </SheetContent>

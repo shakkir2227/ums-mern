@@ -81,5 +81,15 @@ export const updateUser = async (req, res, next) => {
 }
 
 export const deleteUser = async (req, res, next) => {
-    const { id: userId } = req.params   
+    const { id: userId } = req.params
+
+
+    try {
+        await User.deleteOne({ _id: userId })
+        return res.status(200).json({message: 'Deleted User successfully', id: userId})
+
+    } catch (error) {
+        console.log(error)
+        next(errorHandler(500, error.message))
+    }
 }
