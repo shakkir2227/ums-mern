@@ -1,8 +1,20 @@
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { userSignOut } from '../redux/user/userSlice';
 
 const Header = () => {
   const currentUser = useSelector((state) => state.user.currentUser);
+  const dispatch=  useDispatch()
+  const navigate = useNavigate()
+
+  const handleSignOut = async () => {
+    try {
+      await fetch('/api/auth/signout');
+      dispatch(userSignOut())
+      navigate("/signin")
+
+    } catch (error) {}
+  };
 
   return (
     <div className="bg-slate-200">
@@ -13,15 +25,10 @@ const Header = () => {
         <Link to="/">
           <h1 className="font-bold">UMS APP</h1>
         </Link>
-        <ul className="flex gap-4">
-          <Link to="/home">
-            <li>Home</li>
-          </Link>
-          <Link to="/about">
-            <li>About</li>
-          </Link>
-
-          <Link to={currentUser ? '/profile' : 'sign-in'}>
+        <ul className="flex gap-10">
+    
+          {currentUser && <li className='cursor-pointer' onClick={handleSignOut}>Logout</li>}
+          <Link to={currentUser ? '/profile' : ''}>
             {currentUser ? (
               <img
                 src={currentUser.profilePicture}
@@ -29,7 +36,7 @@ const Header = () => {
                 className="h-8 w-8 rounded-full object-cover"
               />
             ) : (
-              <li>Sign In </li>
+             ''
             )}
           </Link>
         </ul>

@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import OAuth from '../components/OAuth';
+import { useSelector, useDispatch } from 'react-redux';
+import { signInFailure, signInStart, signInSuccess } from '../redux/user/userSlice';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const { currentUser, loading, error } = useSelector((state) => state.user);
 
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -15,10 +17,10 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
-      setLoading(true);
-      setError(false)
+      // Reusing sign in dispatch in sign up.
+      dispatch(signInStart());
       const res = await fetch(`/api/auth/signup`, {
         method: 'POST',
         headers: {
@@ -28,17 +30,16 @@ const SignUp = () => {
       });
 
       const data = await res.json();
-      setLoading(false);
 
       if (data.error) {
-        setError(true);
-        return
+        dispatch(signInFailure());
+        return;
       }
 
-      navigate("/sign-in")
-
+      navigate('/');
+      dispatch(signInSuccess());
     } catch (err) {
-      setLoading(false)
+      setLoading(false);
       setError(true);
     }
   };
@@ -83,12 +84,12 @@ const SignUp = () => {
         >
           {loading ? `Loading...` : `Sign Up`}
         </button>
-        <OAuth/>
+        <OAuth />
       </form>
 
       <div className="flex gap-2 mt-5">
         <p>Have an account? </p>
-        <Link to="/sign-in">
+        <Link to="/signin">
           <span className="text-blue-500">Sign In</span>
         </Link>
       </div>

@@ -1,16 +1,28 @@
 import { useRef, useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from 'firebase/storage';
 import { app } from '../firebase';
+import {
+  updateUserStart,
+  updateUserSuccess,
+  updateUserFailure,
+} from '../redux/user/userSlice.js';
 
 const Profile = () => {
   const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
   const { username, email } = currentUser;
   const [image, setImage] = useState(undefined);
   const [imagePercent, setImagePercent] = useState(0);
-  const [imageError, setImageError] = useState(false)
+  const [imageError, setImageError] = useState(false);
   const fileRef = useRef(null);
-  const [formData, setFormData] = useState({})
+  const [formData, setFormData] = useState({});
 
   useEffect(() => {
     if (image) {
@@ -31,7 +43,7 @@ const Profile = () => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setImagePercent(Math.round(progress));
-      }, 
+      },
       (error) => {
         setImageError(true);
       },
@@ -41,6 +53,38 @@ const Profile = () => {
         );
       }
     );
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      dispatch(updateUserStart());
+
+      const res = await fetch('/api/user/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+      console.log(data)
+
+      if (data.error) {
+        dispatch(updateUserFailure(data.error));
+      }
+      if(data.message) {
+        // when user does not send an image
+        return
+      }
+
+      dispatch(updateUserSuccess(data));
+
+    } catch (error) {
+      dispatch(updateUserFailure(error));
+    }
   };
 
   return (
@@ -53,7 +97,10 @@ const Profile = () => {
         Profile
       </h1>
 
-      <form className="p-3 flex flex-col gap-5 mx-auto ">
+      <form
+        onSubmit={handleSubmit}
+        className="p-3 flex flex-col gap-5 mx-auto "
+      >
         <input
           type="file"
           hidden
@@ -65,7 +112,7 @@ const Profile = () => {
         ></input>
 
         <img
-          src={ formData.profilePicture || currentUser.profilePicture}
+          src={formData.profilePicture || currentUser.profilePicture}
           alt="profile-picture"
           className="w-20 h-20 mx-auto rounded-full object-cover"
           onClick={() => {
@@ -73,13 +120,18 @@ const Profile = () => {
           }}
         ></img>
 
-        <p className='text-sm self-center'> {imageError ? (
-            <span className='text-red-700'>Error uploading Image</span>
-        ) : imagePercent > 0 && imagePercent < 100 ? (
-          <span> {`Uploading: ${imagePercent} %`} </span>
-        ): imagePercent === 100 ? (
-          <span className='text-green-700'>Image uploaded successfully</span>
-       ) : '' } </p>
+        <p className="text-sm self-center">
+          {' '}
+          {imageError ? (
+            <span className="text-red-700">Error uploading Image</span>
+          ) : imagePercent > 0 && imagePercent < 100 ? (
+            <span> {`Uploading: ${imagePercent} %`} </span>
+          ) : imagePercent === 100 ? (
+            <span className="text-green-700">Image uploaded successfully</span>
+          ) : (
+            ''
+          )}{' '}
+        </p>
 
         <input
           type="text"

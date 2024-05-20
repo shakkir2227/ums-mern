@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   signInStart,
@@ -10,10 +10,16 @@ import OAuth from '../components/OAuth.jsx';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({});
-  const { loading, error } = useSelector((state) => state.user);
+  const { loading, error, currentUser } = useSelector((state) => state.user);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (currentUser) {
+      navigate("/")
+    }
+  });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -86,7 +92,7 @@ const SignIn = () => {
 
       <div className="flex gap-2 mt-5">
         <p>Dont have an account? </p>
-        <Link to="/sign-up">
+        <Link to="/signup">
           <span className="text-blue-500">Sign Up</span>
         </Link>
       </div>
