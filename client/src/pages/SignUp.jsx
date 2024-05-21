@@ -36,7 +36,6 @@ const SignUp = () => {
       });
       return;
     }
-    console.log(username);
     if (
       username.trim() === '' ||
       password.trim() === '' ||

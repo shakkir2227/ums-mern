@@ -18,7 +18,6 @@ const usersListSlice = createSlice({
             state.users.push(action.payload)
         },
         removeDeletedUser: (state, action) => {
-            console.log(action.payload.id)
             state.users = state.users.filter((user) => (user._id !== action.payload.id))
         }
     }

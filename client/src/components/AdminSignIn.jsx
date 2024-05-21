@@ -6,10 +6,13 @@ import {
   signInFailure,
 } from '../redux/user/userSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
+import { useToast } from '@/components/ui/use-toast';
+import { Toaster } from '@/components/ui/toaster';
 
 const AdminSignIn = () => {
   const [formData, setFormData] = useState({});
   const { loading, error } = useSelector((state) => state.user);
+  const { toast } = useToast();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -33,8 +36,13 @@ const AdminSignIn = () => {
       });
 
       const data = await res.json();
-
+      console.log(data)
       if (data.error) {
+
+         toast({
+           title: 'Oops! 🛑 It seems an error occurred.',
+           description: data.error,
+         });
         dispatch(signInFailure(data.error));
         return;
       }
@@ -80,12 +88,12 @@ const AdminSignIn = () => {
         >
           {loading ? `Loading...` : `Sign In`}
         </button>
-
       </form>
 
       <p className="text-red-700 mt-5">
         {error ? error || `Something went wrong` : ''}
       </p>
+      <Toaster />
     </div>
   );
 };

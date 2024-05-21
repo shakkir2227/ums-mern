@@ -51,7 +51,6 @@ const Profile = () => {
       }
       dispatch(signInSuccess(data));
     } catch (error) {
-      console.log(error);
     }
   };
 
@@ -74,7 +73,6 @@ const Profile = () => {
       });
 
       const data = await res.json();
-      console.log(data);
 
       if (data.error) {
         dispatch(updateUserFailure(data.error));

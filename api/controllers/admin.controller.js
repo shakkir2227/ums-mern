@@ -6,6 +6,7 @@ import bcryptjs from "bcryptjs"
 
 export const LoginAdmin = async (req, res, next) => {
 
+
     // Validate the email first, if error, wrong credentials
     // try a db call to get the user with this email and is an admin
     // if no such user, return You are not authorized
@@ -15,7 +16,7 @@ export const LoginAdmin = async (req, res, next) => {
 
     const { email, password } = req.body;
 
-    if (!email.trim()) return next(errorHandler(404, 'Invalid Credentials'))
+    if (!email?.trim()) return next(errorHandler(404, 'Invalid Credentials'))
 
     const admin = await User.findOne({ email, isAdmin: true })
     if (!admin) return next(errorHandler(404, 'Invalid credentials'))
@@ -37,6 +38,7 @@ export const LoginAdmin = async (req, res, next) => {
 
 export const viewUsersList = async (req, res, next) => {
 
+
     // Take all users except admin, take their username, email
     // profile pic and id. 
     try {
@@ -56,8 +58,10 @@ export const viewUsersList = async (req, res, next) => {
             }
         ])
 
+
         return res.status(200).json(allUsers)
     } catch (error) {
+        console.log(error)
         next(errorHandler(404, 'Internal server Error'))
     }
 
@@ -67,6 +71,8 @@ export const updateUser = async (req, res, next) => {
 
     const { id: userId } = req.params
     const { username, profilePicture } = req.body;
+
+    if (username?.trim() === "") return next(errorHandler(400, `Oops! It seems there was an issue with your submission`))
 
     try {
         await User.updateOne({ _id: userId }, { $set: { username, profilePicture } })

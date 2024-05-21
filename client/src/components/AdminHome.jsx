@@ -13,6 +13,7 @@ const AdminHome = () => {
   const [filteredUsers, setFilteredUsers] = useState(null);
   const users = useSelector((state) => state.usersList.users);
 
+
   function handleChangeInSearch(e) {
     setSearchText(e.target.value);
   }

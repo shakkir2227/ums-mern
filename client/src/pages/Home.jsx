@@ -14,7 +14,6 @@ const Home = () => {
     try {
       const res = await fetch('api/user/updated-profile');
       const data = await res.json();
-      console.log(data);
       if (data.error) {
         toast({
           title: 'Uh oh! Something went wrong.',
@@ -26,7 +25,6 @@ const Home = () => {
       }
       dispatch(signInSuccess(data));
     } catch (error) {
-      console.log(error);
     }
   };
 

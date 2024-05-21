@@ -7,6 +7,7 @@ export const test = (req, res) => {
 
 export const updateUser = async (req, res, next) => {
 
+
     // if user is not authenticated, throw error
     if (!req.user) return next(errorHandler(401, 'You need to Login!!'))
 
@@ -36,6 +37,7 @@ export const updateUser = async (req, res, next) => {
 }
 
 export const getCurrentProfileData = async (req, res, next) => {
+
     const { id } = req.user;
 
     try {

@@ -73,8 +73,12 @@ const EditSheet = ({ id, username, email, profilePicture }) => {
       });
 
       const data = await res.json();
+      console.log(data)
       if (data.error) {
-        console.log(data.error);
+         toast({
+           description: data.error,
+         });
+         return
       }
 
       toast({
@@ -114,7 +118,6 @@ const EditSheet = ({ id, username, email, profilePicture }) => {
       toast({
         description: data.message,
       });
-      console.log(data.id)
 
      dispatch(removeDeletedUser(data));
      navigate("/admin/signin")
