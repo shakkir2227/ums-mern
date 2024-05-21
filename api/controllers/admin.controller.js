@@ -93,3 +93,23 @@ export const deleteUser = async (req, res, next) => {
         next(errorHandler(500, error.message))
     }
 }
+
+export const createUser = async (req, res, next) => {
+    const { email, username } = req.body
+    if (email.trim() === "" || username.trim() === "") return next(errorHandler(400, "Bad Input"))
+
+    const generatedPassword = Math.random().toString(36).slice(-8)
+    const hashedPassword = bcryptjs.hashSync(generatedPassword, 10)
+
+    try {
+        await User.create({
+            username,
+            email,
+            password: hashedPassword
+        })
+        return res.status(201).json({ message: "User created successfully" })
+
+    } catch (err) {
+        next(errorHandler(500, err.message))
+    }
+}

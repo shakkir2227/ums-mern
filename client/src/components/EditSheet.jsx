@@ -78,7 +78,8 @@ const EditSheet = ({ id, username, email, profilePicture }) => {
       }
 
       toast({
-        description: 'User Updated successfully.',
+        description:
+          'Update successful! 🚀 Provided information has been successfully updated.',
       });
       
       dispatch(replaceUpdatedUser(data));

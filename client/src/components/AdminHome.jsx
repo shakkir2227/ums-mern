@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import UserHeader from './UserHeader';
 import { Table } from './ui/table';
 import UserBody from './UserBody';
+import CreateUserSheet from './CreateUserSheet';
 
 const AdminHome = () => {
   const [searchText, setSearchText] = useState(undefined);
@@ -34,8 +35,8 @@ const AdminHome = () => {
   }, [searchText])
 
   return (
-    <div className="w-full max-w-md  mx-auto p-5">
-      <div className="flex w-full max-w-sm items-center space-x-2 p-6">
+    <div className="w-full max-w-xl  mx-auto p-5">
+      <div className="flex w-full max-w-lg items-center space-x-3 p-6">
         <Input
           type="text"
           placeholder="Search Users..."
@@ -45,6 +46,9 @@ const AdminHome = () => {
         <Button type="button" onClick={findAndSetUsers}>
           Search
         </Button>
+        
+        <CreateUserSheet/>
+
       </div>
       {filteredUsers ? (
         <Table>
