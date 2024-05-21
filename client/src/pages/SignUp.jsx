@@ -2,11 +2,19 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import OAuth from '../components/OAuth';
 import { useSelector, useDispatch } from 'react-redux';
-import { signInFailure, signInStart, signInSuccess } from '../redux/user/userSlice';
+import {
+  signInFailure,
+  signInStart,
+  signInSuccess,
+} from '../redux/user/userSlice';
+
+import { useToast } from '@/components/ui/use-toast';
+import { Toaster } from '@/components/ui/toaster';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({});
   const { currentUser, loading, error } = useSelector((state) => state.user);
+  const { toast } = useToast();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -19,9 +27,41 @@ const SignUp = () => {
     e.preventDefault();
 
     // validating the values
-    const [username, email, password] =  formData
-    if
+    const { username, password, email } = formData;
+    if (!username || !password || !email) {
+      toast({
+        title: 'All fields fields are mandatory !!! .',
+        description:
+          'Oops! Looks like you missed a few mandatory fields. Please fill them out to proceed. ',
+      });
+      return;
+    }
+    console.log(username);
+    if (
+      username.trim() === '' ||
+      password.trim() === '' ||
+      email.trim() === ''
+    ) {
+      toast({
+        title: 'All fields fields are mandatory !!! .',
+        description:
+          'Oops! Looks like you missed a few mandatory fields. Please fill them out to proceed. ',
+      });
+      return;
+    }
 
+    if (
+      username.length < 3 ||
+      !email.match(/^\S+@\S+\.\S+$/) ||
+      password.length !== 3
+    ) {
+       toast({
+         title: 'All fields fields are mandatory !!! .',
+         description:
+           'Username must be at least 3 characters long. Password must be exactly 3 characters long.',
+       });
+       return
+    }
     try {
       // Reusing sign in dispatch in sign up.
       dispatch(signInStart());
@@ -66,7 +106,7 @@ const SignUp = () => {
           onChange={handleChange}
         />
         <input
-          type="text"
+          type="email"
           placeholder="Email"
           id="email"
           className="bg-slate-100 p-3 rounded-r-lg"
@@ -98,6 +138,7 @@ const SignUp = () => {
         </Link>
       </div>
       <p className="text-red-700 mt-5">{error && `Something went wrong!!`}</p>
+      <Toaster />
     </div>
   );
 };

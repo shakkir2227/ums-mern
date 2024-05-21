@@ -5,9 +5,9 @@ const RedirectAdminIfLoggedIn = () => {
   const currentUser = useSelector((state) => state.user?.currentUser);
 
   if (currentUser?.isAdmin) {
-    return currentUser ? <Navigate to="/admin/home" /> : <Outlet /> 
+    return <Navigate to="/admin/home" />;
   } else {
-    return <Navigate to="/signin"></Navigate>;
+    return <Outlet />;
   }
 };
 

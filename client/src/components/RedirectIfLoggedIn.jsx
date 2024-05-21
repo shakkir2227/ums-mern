@@ -4,11 +4,8 @@ import { useSelector } from 'react-redux';
 const RedirectIfLoggedIn = () => {
   const { currentUser } = useSelector((state) => state.user);
 
-  if (!currentUser?.isAdmin) {
-    return currentUser ? <Navigate to="/"></Navigate> : <Outlet />;
-  } else {
-     <Navigate to="/admin/signin"></Navigate>;
-  }
+  if (!currentUser) return <Outlet />;
+  if (!currentUser.isAdmin) return <Navigate to="/"></Navigate>;
 };
 
 export default RedirectIfLoggedIn;

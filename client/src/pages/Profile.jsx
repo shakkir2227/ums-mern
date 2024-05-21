@@ -1,31 +1,63 @@
 import { useRef, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
-import {useImageUpload} from "../utils/useImageUpload.js"
+import { useImageUpload } from '../utils/useImageUpload.js';
 import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
+  signInSuccess,
+  userSignOut,
 } from '../redux/user/userSlice.js';
+import { useToast } from '@/components/ui/use-toast';
+import { Toaster } from '@/components/ui/toaster';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-
+  const navigate = useNavigate;
   const { username, email } = currentUser;
   const [image, setImage] = useState(undefined);
   const [imagePercent, setImagePercent] = useState(0);
   const [imageError, setImageError] = useState(false);
   const fileRef = useRef(null);
   const [formData, setFormData] = useState({});
+  const { toast } = useToast();
 
   useEffect(() => {
     if (image) {
-      useImageUpload(image, setImagePercent, setImageError, setFormData, formData);
+      useImageUpload(
+        image,
+        setImagePercent,
+        setImageError,
+        setFormData,
+        formData
+      );
     }
   }, [image]);
 
- 
+  const fetchCurrentUserData = async () => {
+    try {
+      const res = await fetch('api/user/updated-profile');
+      const data = await res.json();
+      if (data.error) {
+        toast({
+          title: 'Uh oh! Something went wrong.',
+          description: data.error,
+        });
+        dispatch(userSignOut());
+        navigate('/signin');
+        return;
+      }
+      dispatch(signInSuccess(data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCurrentUserData();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,18 +74,17 @@ const Profile = () => {
       });
 
       const data = await res.json();
-      console.log(data)
+      console.log(data);
 
       if (data.error) {
         dispatch(updateUserFailure(data.error));
       }
-      if(data.message) {
+      if (data.message) {
         // when user does not send an image
-        return
+        return;
       }
 
       dispatch(updateUserSuccess(data));
-
     } catch (error) {
       dispatch(updateUserFailure(error));
     }
@@ -127,6 +158,7 @@ const Profile = () => {
           Update Profile picture
         </button>
       </form>
+      <Toaster />
     </div>
   );
 };
