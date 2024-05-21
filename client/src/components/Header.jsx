@@ -22,12 +22,22 @@ const Header = () => {
         className="flex justify-between items-center max-w-6xl mx-auto
       p-3"
       >
-        <Link to="/">
-          <h1 className="font-bold">UMS APP</h1>
-        </Link>
+        {currentUser?.isAdmin ? (
+          <Link to="/admin/home">
+            <h1 className="font-bold">UMS APP</h1>
+          </Link>
+        ) : (
+          <Link to="/">
+            <h1 className="font-bold">UMS APP</h1>
+          </Link>
+        )}
+
         <ul className="flex gap-10">
-    
-          {currentUser && <li className='cursor-pointer' onClick={handleSignOut}>Logout</li>}
+          {currentUser && (
+            <li className="cursor-pointer" onClick={handleSignOut}>
+              Logout
+            </li>
+          )}
           <Link to={currentUser ? '/profile' : ''}>
             {currentUser ? (
               <img
@@ -36,7 +46,7 @@ const Header = () => {
                 className="h-8 w-8 rounded-full object-cover"
               />
             ) : (
-             ''
+              ''
             )}
           </Link>
         </ul>

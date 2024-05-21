@@ -90,8 +90,7 @@ const EditSheet = ({ id, username, email, profilePicture }) => {
   };
 
   const handleDeletion = async (e) => {
-    e.preventDefault();
-
+  
     try {
       const api_endpoint = `/api/admin/delete-user/${id}`;
       const res = await fetch(api_endpoint, {
@@ -117,6 +116,7 @@ const EditSheet = ({ id, username, email, profilePicture }) => {
       console.log(data.id)
 
      dispatch(removeDeletedUser(data));
+     navigate("/admin/signin")
 
 
     } catch (error) {
